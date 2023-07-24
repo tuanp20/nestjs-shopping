@@ -11,12 +11,12 @@ export class UploadFileService {
     private readonly fileImageModel: Model<FileImageDocument>,
   ) {}
 
-  async addImage(createFileImageDTO: CreateFileImageDTO): Promise<FileImage> {
-    const newImage = await this.fileImageModel.create(createFileImageDTO);
+  async addImage(file: Express.Multer.File): Promise<FileImage> {
+    const newImage = await this.fileImageModel.create(file);
     return newImage;
   }
 
   // async getImage(fileName: string): Promise<FileImage>{
-    
+
   // }
 }
