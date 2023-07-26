@@ -18,12 +18,12 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/role.enum';
 
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.User)
 @Controller('store/products')
 export class ProductController {
   constructor(private productService: ProductService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
   @Get('/')
   async getProducts(@Query() filterProductDTO: FilterProductDTO) {
     if (Object.keys(filterProductDTO).length) {
@@ -37,8 +37,6 @@ export class ProductController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
   @Get('/:id')
   async getProduct(@Param('id') id: string) {
     const product = await this.productService.getProduct(id);
@@ -48,16 +46,13 @@ export class ProductController {
     return product;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
+
   @Post('/add')
   async addProduct(@Body() createProductDTO: CreateProductDTO) {
     const product = await this.productService.addProduct(createProductDTO);
     return product;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
   @Put('/:id')
   async updateProduct(
     @Param('id') id: string,
@@ -73,8 +68,6 @@ export class ProductController {
     return product;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.User)
   @Delete('/:id')
   async removeProduct(@Param('id') id: string) {
     await this.productService.removeProduct(id);
