@@ -15,6 +15,7 @@ import { CreateUserDTO } from 'src/user/dtos/create-user-dto';
 import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { LoginDTO } from 'src/user/dtos/login-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -31,8 +32,21 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() loginDTO: LoginDTO) {
+    return this.authService.login(loginDTO);
+  }
+
+  // @UseGuards(LocalAuthGuard)
+  // @Get('/logout')
+  // logout(@Request() req): any {
+  //   console.log('req.cookie', req.cookie);
+  //   // req.session.destroy();
+  //   return { msg: 'The user session has ended' };
+  // }
+
+  @Get('logout')
+  logout(@Request() req: Request) {
+    this.authService.logout(req);
   }
 
   @Get('/google')

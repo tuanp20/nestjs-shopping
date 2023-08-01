@@ -10,13 +10,14 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
 import { FacebookStrategy } from './strategies/facebook.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { RefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_ACCESS_SECRET,
       signOptions: { expiresIn: '3600s' },
     }),
   ],
@@ -24,6 +25,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    RefreshTokenStrategy,
     FacebookStrategy,
     GoogleStrategy,
     // {
