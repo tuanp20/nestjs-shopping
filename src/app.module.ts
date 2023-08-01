@@ -1,13 +1,12 @@
-import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CartModule } from './cart/cart.module';
 import { CategoryModule } from './category/category.module';
-import { ProductModule } from './product/product.module';
-import { UserModule } from './user/user.module';
 import { MessagesModule } from './messages/messages.module';
+import { ProductModule } from './product/product.module';
 import { UploadFileModule } from './upload-file/upload-file.module';
-import { CorsMiddleware } from './middleware/cors.middleware';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -21,10 +20,5 @@ import { CorsMiddleware } from './middleware/cors.middleware';
     MessagesModule,
     UploadFileModule,
   ],
-  providers: [CorsMiddleware],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CorsMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

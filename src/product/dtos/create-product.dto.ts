@@ -2,6 +2,6 @@ export class CreateProductDTO {
   name: string;
   description: string;
   price: string;
-  image: string;
+  image?: string;
   categoryId: string;
 }

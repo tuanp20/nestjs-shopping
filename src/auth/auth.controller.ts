@@ -14,6 +14,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { CreateUserDTO } from 'src/user/dtos/create-user-dto';
 import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -32,6 +33,16 @@ export class AuthController {
   @Post('/login')
   async login(@Request() req) {
     return this.authService.login(req.user);
+  }
+
+  @Get('/google')
+  @UseGuards(AuthGuard('/google'))
+  async googleAuth(@Request() req) {}
+
+  @Get('/google/redirect')
+  @UseGuards(AuthGuard('google'))
+  googleAuthRedirect(@Request() req) {
+    return this.authService.googleLogin(req);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

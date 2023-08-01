@@ -8,6 +8,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
+import { FacebookStrategy } from './strategies/facebook.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { RolesGuard } from './guards/roles.guard';
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    FacebookStrategy,
+    GoogleStrategy,
     // {
     //   provide: APP_GUARD,
     //   useClass: RolesGuard,
