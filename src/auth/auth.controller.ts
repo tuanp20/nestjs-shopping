@@ -5,6 +5,7 @@ import {
   Post,
   Body,
   UseGuards,
+  Response,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
@@ -45,8 +46,17 @@ export class AuthController {
   // }
 
   @Get('logout')
-  logout(@Request() req: Request) {
-    this.authService.logout(req);
+  logout(@Request() req: Request, @Response() res: Response) {
+    // this.authService.logout(req);
+  }
+
+  @Post('/refresh-token')
+  async refresh(@Body() body) {
+    const decodedRefreshToken = await this.authService.verifyRefreshToken(
+      body.userId,
+      body.refreshToken,
+    );
+    return { decodedRefreshToken };
   }
 
   @Get('/google')

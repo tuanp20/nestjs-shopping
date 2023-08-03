@@ -1,7 +1,11 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt'; // 1
+import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from 'src/user/dtos/login-dto';
 import { UpdateUserDTO } from 'src/user/dtos/update-user-dto';
 
@@ -25,12 +29,10 @@ export class AuthService {
     const user: any = await this.userService.findUser(loginDTO.username);
     if (!user) throw new BadRequestException('User does not exist');
 
-    const tokens = await this.getTokens(user._id, user.username);
+    const tokens = await this.getTokens(user._id, user);
+
     await this.updateRefreshToken(user._id, tokens.refreshToken);
-    return {
-      access_token: tokens,
-      // refreshToken: this.jwtService.
-    };
+    return tokens;
   }
 
   async logout(user: any) {
@@ -57,26 +59,44 @@ export class AuthService {
     } as UpdateUserDTO);
   }
 
-  async getTokens(userId: string, username: string) {
+  async verifyRefreshToken(userId: string, refreshToken: string) {
+    try {
+      const user = await this.userService.findById(userId);
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+      const payload: any = await this.jwtService.verifyAsync(refreshToken, {
+        secret: process.env.JWT_REFRESH_SECRET,
+      });
+      const tokens = await this.getTokens(payload.sub, payload);
+      return tokens;
+    } catch (error) {
+      throw new Error('Invalid refresh token');
+    }
+  }
+
+  async getTokens(userId: string, user: any) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
-          username,
+          username: user.username,
+          roles: user.roles,
         },
         {
           secret: process.env.JWT_ACCESS_SECRET,
-          expiresIn: '15m',
+          expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRATION_TIME,
         },
       ),
       this.jwtService.signAsync(
         {
           sub: userId,
-          username,
+          username: user.username,
+          roles: user.roles,
         },
         {
           secret: process.env.JWT_REFRESH_SECRET,
-          expiresIn: '7d',
+          expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
         },
       ),
     ]);

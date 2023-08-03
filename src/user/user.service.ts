@@ -33,6 +33,11 @@ export class UserService {
     return user;
   }
 
+  async findById(userId: string): Promise<User | undefined> {
+    const user = await this.userModel.findOne({ _id: userId });
+    return user;
+  }
+
   async update(
     id: string,
     updateUserDto: UpdateUserDTO,
@@ -45,11 +50,4 @@ export class UserService {
   async remove(id: string): Promise<UserDocument> {
     return this.userModel.findByIdAndDelete(id).exec();
   }
-
-  // async updateRefreshToken(userId: string, refreshToken: string) {
-  //   const hashedRefreshToken = await this.hashData(refreshToken);
-  //   await this.usersService.update(userId, {
-  //     refreshToken: hashedRefreshToken,
-  //   });
-  // }
 }
