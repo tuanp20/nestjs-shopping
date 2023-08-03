@@ -5,6 +5,10 @@ import { Product, ProductDocument } from './schemas/product.schema';
 import { FilterProductDTO } from './dtos/filter-product.dto';
 import { CreateProductDTO } from './dtos/create-product.dto';
 
+export interface PropData {
+  count: number;
+  data: Product[];
+}
 @Injectable()
 export class ProductService {
   constructor(
@@ -12,16 +16,20 @@ export class ProductService {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
-  async getAllProducts(): Promise<Product[]> {
+  async getAllProducts(): Promise<PropData> {
     const products = await this.productModel.find().exec();
-    return products;
+    const countProduct = products.length;
+    return {
+      count: countProduct,
+      data: products,
+    };
   }
 
   async getFilteredProducts(
     filterProductDTO: FilterProductDTO,
-  ): Promise<Product[]> {
+  ): Promise<PropData> {
     const { search, categoryId } = filterProductDTO;
-    let products = await this.getAllProducts();
+    let { data: products } = await this.getAllProducts();
 
     if (search) {
       products = products.filter(
@@ -31,9 +39,13 @@ export class ProductService {
     }
 
     if (categoryId) {
-      products = products.filter((product) => product.categoryId === categoryId);
+      products = products.filter(
+        (product) => product.categoryId === categoryId,
+      );
     }
-    return products;
+
+    const countProduct = products.length;
+    return { count: countProduct, data: products };
   }
 
   async addProduct(createProductDTO: CreateProductDTO): Promise<Product> {

@@ -10,7 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ProductService } from './product.service';
+import { ProductService, PropData } from './product.service';
 import { FilterProductDTO } from './dtos/filter-product.dto';
 import { CreateProductDTO } from './dtos/create-product.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
@@ -25,7 +25,10 @@ export class ProductController {
   constructor(private productService: ProductService) {}
 
   @Get('/')
-  async getProducts(@Query() filterProductDTO: FilterProductDTO) {
+  async getProducts(
+    @Query() filterProductDTO: FilterProductDTO,
+  ): Promise<PropData> {
+    console.log('filterProductDTO', filterProductDTO);
     if (Object.keys(filterProductDTO).length) {
       const filteredProducts = await this.productService.getFilteredProducts(
         filterProductDTO,
@@ -45,7 +48,6 @@ export class ProductController {
     }
     return product;
   }
-
 
   @Post('/add')
   async addProduct(@Body() createProductDTO: CreateProductDTO) {

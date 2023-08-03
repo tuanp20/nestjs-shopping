@@ -52,9 +52,10 @@ export class AuthController {
 
   @Post('/refresh-token')
   async refresh(@Body() body) {
+    const { userId, refreshToken } = body;
     const decodedRefreshToken = await this.authService.verifyRefreshToken(
-      body.userId,
-      body.refreshToken,
+      userId,
+      refreshToken,
     );
     return { decodedRefreshToken };
   }
